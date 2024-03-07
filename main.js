@@ -19,7 +19,6 @@ function generateMines(numMine, row, col) {
             Math.floor(Math.random() * row), 
             Math.floor(Math.random() * col)
             ]
-        console.log(numbers, randomNumber)
         const found = numbers.some((arr) => {
             return arr[0] === randomNumber[0] && arr[1] === randomNumber[1]
         })
@@ -36,7 +35,7 @@ function makeSquares(randomNumbers, row, col) {
             const square = document.createElement('div')
             board.appendChild(square)
             square.classList = 'square'
-            square.id = `${j}-${i}`
+            square.id = `${j}${i}`
             square.innerHTML = `${j}, ${i}`
 
             const found = randomNumbers.some((arr) => {
@@ -54,18 +53,58 @@ function makeSquares(randomNumbers, row, col) {
 }
 
 function checkMine(e) {
-    console.log(e.target.classList)
     if (e.target.classList.contains('mine')){
         e.target.style.backgroundColor = 'red'
     }
     else {
         e.target.style.backgroundColor = 'green'
+        const cell = [Number(e.target.id[0]), Number(e.target.id[1])]
+        const surrounding = scanSurroundings(cell)
+        console.log(surrounding)
+        e.target.innerHTML = `${surrounding}`
     }
-    const cell = [Number(e.target.id[0]), Number(e.target.id[2])]
-    scanSurroundings(cell)
 }
 
+
+// this is slightly broken right now //
 function scanSurroundings(cell){
     let minesAroundCell = 0
-    console.log(board.children)
+    console.log(minesAroundCell)
+    Array.from(board.children).forEach(element => {
+        console.log(Number(element.id[0]) - 1 === cell[0], Number(element.id[0]), cell[0])
+        if ( 
+            Number(element.id[0]) === cell[0] - 1 &&
+            (
+                Number(element.id[1]) === cell[1] - 1 ||
+                Number(element.id[1]) === cell[1] ||
+                Number(element.id[1]) === cell[1] + 1 
+            ) &&
+            element.classList.contains('mine')
+        ) {
+            minesAroundCell += 1
+        }
+        else if (
+            Number(element.id[0]) === cell[0] && 
+            ( 
+                Number(element.id[1]) === cell[1] - 1 ||
+                Number(element.id[1]) === cell[1] + 1 
+            ) &&
+            element.classList.contains('mine')
+            ) {
+                minesAroundCell += 1
+            }
+        else if (
+            Number(element.id[0]) === cell[0] + 1  && 
+            ( 
+                Number(element.id[1]) === cell[1] - 1 ||
+                Number(element.id[1]) === cell[1] ||
+                Number(element.id[1]) === cell[1] + 1  
+            ) &&
+            element.classList.contains('mine')
+            ) {
+                minesAroundCell += 1
+            }
+    });
+    console.log(minesAroundCell)
+    return minesAroundCell
 }
