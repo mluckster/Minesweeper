@@ -2,6 +2,7 @@ const board = document.getElementById('board')
 const generate = document.getElementById('easy')
 let numberOfMines = 0
 let numberOfFlags = 0
+let numberOfClears = 0
 
 generate.addEventListener('click', generateBoard)
 
@@ -13,6 +14,7 @@ function generateBoard(e) {
     numberOfMines = 10 // 10 for easy difficulty - need to change after if I put in other diffs
     makeSquares(randomNumbers, 8, 8)
     board.addEventListener('click', checkMine)
+    board.addEventListener('contextmenu', placeFlag)
 }
 
 // generates an array of numbers which will correspond to the location of the mines
@@ -59,24 +61,29 @@ function makeSquares(randomNumbers, row, col) {
 
 function checkMine(e) {
     if (e.target.classList.contains('mine')){
-        e.target.style.backgroundColor = 'red'
+        loseGame()
         // GAME IF LOST IF THIS HAPPENS!!!!!
     }
     else {
-        e.target.classList.add('active')
+        if (!e.target.classList.contains('active')) {
+            e.target.classList.add('active')
+            numberOfClears += 1
+            console.log(numberOfClears)
+            checkWinCondition()
+        }
+        e.target.classList.remove('flag')
         const cell = [Number(e.target.id[0]), Number(e.target.id[1])]
         const surrounding = scanSurroundings(cell)
         if (surrounding == 0){
             uncoverAdjacentSquares(e.target)
+            e.target.innerHTML = ``
+        } else {
+            e.target.innerHTML = `${surrounding}`
         }
-
-        e.target.innerHTML = `${surrounding}`
     }
 }
 
 function uncoverAdjacentSquares(square){
-    // we can do row  = square.id[0]
-    // col = square.id[1]
     // then we can 2d loop through row -1 to row +1 and within col -1 to col + 1
     // finding the element by using: document.getElementById(''${i}${j})
 
@@ -88,8 +95,16 @@ function uncoverAdjacentSquares(square){
             const element = document.getElementById(`${i}${j}`)
             if (element && (i != row || j != col)) { // cases around the edge of the board -- element would be null
                 const surroundingMines = scanSurroundings([i, j])
-                element.classList.add('active')
-                element.innerHTML = `${surroundingMines}`
+                if (!element.classList.contains('active')) {
+                    element.classList.add('active')
+                    numberOfClears += 1
+                    console.log(numberOfClears)
+                }
+                if (surroundingMines != 0){
+                    element.innerHTML = `${surroundingMines}`
+                } else {
+                    element.innerHTML = ``
+                }
                 console.log(square, element)
                 if (surroundingMines == 0 && !element.classList.contains('visited')) {
                     element.classList.add('visited')
@@ -139,4 +154,30 @@ function scanSurroundings(cell){
             }
     });
     return minesAroundCell
+}
+
+function placeFlag(e){
+    e.preventDefault()
+    if (e.target.classList.contains('flag')){
+        e.target.classList.remove('flag')
+    } else if (!e.target.classList.contains('active')) {
+        e.target.classList.add('flag')
+    }
+}
+
+function loseGame(){
+    Array.from(board.children).forEach(element => {
+        if (element.classList.contains('mine')) {
+            element.style.backgroundColor = 'red'
+        }
+    })
+    setTimeout(() => {
+        alert('game is lost')
+      }, "10");
+}
+
+function checkWinCondition() {
+    if (numberOfClears == 64 - 10) {
+        alert('game is won')
+    }
 }

@@ -23,3 +23,7 @@ body{
 .active{
     background-color: green;
 }
+
+.flag{ 
+    background-color: yellow;
+}
