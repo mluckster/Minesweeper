@@ -1,22 +1,38 @@
 const board = document.getElementById('board')
 const generate = document.getElementById('easy')
+let randomNumbers = []
 let numberOfMines = 0
 let numberOfFlags = 0
 let numberOfClears = 0
 
+// initial event listeners and setup for the game
 generate.addEventListener('click', generateBoard)
-
-// win condition is uncovering all the squares that are NOT mines
+board.addEventListener('click', checkMineHandler)
+board.addEventListener('contextmenu', placeFlag)
+makeSquares(8, 8)
 
 // generates board for the squares to appear
-function generateBoard(e) {
-    var randomNumbers = generateMines(10, 8, 8) // calls to randomly generate location of mines (2d array)
-    numberOfMines = 10 // 10 for easy difficulty - need to change after if I put in other diffs
-    makeSquares(randomNumbers, 8, 8)
-    board.addEventListener('click', function(event){
-        checkMine(event, randomNumbers)
-    })
+function generateBoard(e) {   
+    // resetting board from previous game:
+    randomNumbers = []
+    board.innerHTML = ''
+    numberOfClears = 0
+    board.removeEventListener('click', checkMineHandler)
+    board.removeEventListener('contextmenu', placeFlag)
+    
+    // make grid based on difficulty and set number of mines
+    numberOfMines = 10
+    
+    //random number array only made after first square is clicked!
+    board.addEventListener('click', checkMineHandler)
     board.addEventListener('contextmenu', placeFlag)
+    makeSquares(8, 8)
+
+    randomNumbers = generateMines(10, 8, 8) // calls to randomly generate location of mines (2d array)
+}
+
+function checkMineHandler(event){
+    checkMine(event,randomNumbers)
 }
 
 // generates an array of numbers which will correspond to the location of the mines
@@ -38,7 +54,7 @@ function generateMines(numMine, row, col) {
     return numbers
 }
 
-function makeSquares(randomNumbers, row, col) {
+function makeSquares(row, col) {
     for (let i = 0; i < row; i++ ) {
         for (let j = 0; j < col; j++ ) {
             const square = document.createElement('div')
@@ -170,7 +186,11 @@ function loseGame(randomNumbers){
 
     setTimeout(() => {
         alert('game is lost')
-      }, "100");
+    }, "100");
+
+    board.removeEventListener('click', checkMineHandler)
+    board.removeEventListener('contextmenu', placeFlag)
+
 }
 
 function checkWinCondition() {
@@ -184,5 +204,9 @@ function checkWinCondition() {
         setTimeout(() => {
             alert('game is won')
         }, 10);
+    
+        board.removeEventListener('click', checkMineHandler)
+        board.removeEventListener('contextmenu', placeFlag)
+    
     }
 }
