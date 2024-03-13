@@ -6,24 +6,40 @@ body{
     width: 50vw;
     gap: 5px;
     margin-top: 15px;
+    background-color: #373737;
 }
 
 #board{
     display: grid;
     grid-template-columns: repeat(8, 50px);
     grid-template-rows: repeat(8, 50px);
+    grid-gap: 3px;
 }
 
 .square{
-    background-color: black;
-    border: 2px solid red;
-    color: white;
+    background-color: #767676;
+    box-shadow: 4px 4px 25px 0 rgba(255, 255, 255, 0.2), 0 6px 20px 0 rgba(218, 218, 218, 0.2);
+    border: 2px solid white;
 }
 
-.active{
-    background-color: green;
+.square:hover{
+    border: 2px solid black;
 }
 
-.flag{ 
+.active, .active:hover, .square:active{
+    background-color: #a8a8a8;
+    border: 2px solid black;
+    transform: translate(3%, 3%);
+}
+
+.flag, .flag:hover .flag:active{ 
     background-color: yellow;
+    transform: translate(3%, 3%);
+    border: 2px solid black;
+}
+
+.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
