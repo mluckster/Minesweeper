@@ -31,41 +31,6 @@ function generateBoard(e) {
     makeSquares(8, 8)
 }
 
-// generates an array of numbers which will correspond to the location of the mines
-function generateMines(numMine, row, col, element) {
-    const initialClickedSquare = [Number(element.id[0]), Number(element.id[1])]
-
-    let numbers = []
-    console.log('generate mines', element)
-    while (numbers.length < numMine){
-        let randomNumber =
-            [
-            Math.floor(Math.random() * row),
-            Math.floor(Math.random() * col)
-            ]
-
-        let found = numbers.some((arr) => {
-            return arr[0] === randomNumber[0] && arr[1] === randomNumber[1]
-        })
-
-        for (let i = initialClickedSquare[0] - 1; i <= initialClickedSquare[1] + 1; i++){
-            for (let j = initialClickedSquare[1] - 1; j <= initialClickedSquare[1] + 1; j++) {
-                console.log('initial', initialClickedSquare)
-                console.log(randomNumber[0], i, randomNumber[1], j)
-                if (randomNumber[0] === i && randomNumber[1] === j){
-                    found = false
-                }
-            }
-        }
-
-        if (!found){
-            numbers.push(randomNumber)
-        }
-        
-    }
-    return numbers
-}
-
 function makeSquares(row, col) {
     for (let i = 0; i < row; i++ ) {
         for (let j = 0; j < col; j++ ) {
@@ -76,6 +41,42 @@ function makeSquares(row, col) {
             square.innerHTML = `${j}, ${i}`
         }
     }
+}
+
+// generates an array of numbers which will correspond to the location of the mines
+function generateMines(numMine, row, col, element) {
+    
+    let numbers = []
+    console.log('generate mines', element)
+    while (numbers.length < numMine){
+        let randomNumber =
+        [
+            Math.floor(Math.random() * row),
+            Math.floor(Math.random() * col)
+        ]
+        
+        let found = numbers.some((num) => {
+            return num[0] === randomNumber[0] && num[1] === randomNumber[1]
+        })
+        
+        // need to work on this - it's not working
+        const initialClickedSquare = [Number(element.id[0]), Number(element.id[1])]
+
+        for (let i = initialClickedSquare[0] - 1; i <= initialClickedSquare[0] + 1; i++){
+            for (let j = initialClickedSquare[1] - 1; j <= initialClickedSquare[1] + 1; j++) {
+                if (randomNumber[0] === i && randomNumber[1] === j){
+                    console.log('adjacent mine, re-generate')
+                    found = true
+                }
+            }
+        }
+
+        if (!found){
+            numbers.push(randomNumber)
+        }
+
+    }
+    return numbers
 }
 
 function checkMine(e) {
