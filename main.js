@@ -1,13 +1,15 @@
 const board = document.getElementById('board')
 const generate = document.getElementById('easy')
 let randomNumbers = []
-let numberOfMines = 0
+let numberOfMines = 10
 let numberOfFlags = 0
 let numberOfClears = 0
+let noOfRow = 8
+let noOfCol = 8
 
 // initial event listeners and setup for the game
 generate.addEventListener('click', generateBoard)
-board.addEventListener('click', checkMineHandler)
+board.addEventListener('click', checkMine)
 board.addEventListener('contextmenu', placeFlag)
 makeSquares(8, 8)
 
@@ -17,39 +19,49 @@ function generateBoard(e) {
     randomNumbers = []
     board.innerHTML = ''
     numberOfClears = 0
-    board.removeEventListener('click', checkMineHandler)
+    board.removeEventListener('click', checkMine)
     board.removeEventListener('contextmenu', placeFlag)
     
     // make grid based on difficulty and set number of mines
-    numberOfMines = 10
+    numberOfMines = 10 // this line isn't needed currently
     
     //random number array only made after first square is clicked!
-    board.addEventListener('click', checkMineHandler)
+    board.addEventListener('click', checkMine)
     board.addEventListener('contextmenu', placeFlag)
     makeSquares(8, 8)
-
-    randomNumbers = generateMines(10, 8, 8) // calls to randomly generate location of mines (2d array)
-}
-
-function checkMineHandler(event){
-    checkMine(event,randomNumbers)
 }
 
 // generates an array of numbers which will correspond to the location of the mines
-function generateMines(numMine, row, col) {
+function generateMines(numMine, row, col, element) {
+    const initialClickedSquare = [Number(element.id[0]), Number(element.id[1])]
+
     let numbers = []
+    console.log('generate mines', element)
     while (numbers.length < numMine){
         let randomNumber =
             [
             Math.floor(Math.random() * row),
             Math.floor(Math.random() * col)
             ]
-        const found = numbers.some((arr) => {
+
+        let found = numbers.some((arr) => {
             return arr[0] === randomNumber[0] && arr[1] === randomNumber[1]
         })
+
+        for (let i = initialClickedSquare[0] - 1; i <= initialClickedSquare[1] + 1; i++){
+            for (let j = initialClickedSquare[1] - 1; j <= initialClickedSquare[1] + 1; j++) {
+                console.log('initial', initialClickedSquare)
+                console.log(randomNumber[0], i, randomNumber[1], j)
+                if (randomNumber[0] === i && randomNumber[1] === j){
+                    found = false
+                }
+            }
+        }
+
         if (!found){
             numbers.push(randomNumber)
         }
+        
     }
     return numbers
 }
@@ -66,7 +78,11 @@ function makeSquares(row, col) {
     }
 }
 
-function checkMine(e, randomNumbers) {
+function checkMine(e) {
+    if (randomNumbers.length == 0) {
+        randomNumbers = generateMines(numberOfMines, noOfRow, noOfCol, e.target)
+    }
+
     const found = randomNumbers.some((arr) => {
         return arr[0] === Number(e.target.id[0]) && arr[1] === Number(e.target.id[1])
     })
@@ -79,7 +95,6 @@ function checkMine(e, randomNumbers) {
         if (!e.target.classList.contains('active')) {
             e.target.classList.add('active')
             numberOfClears += 1
-            console.log(numberOfClears)
             checkWinCondition()
         }
         e.target.classList.remove('flag')
@@ -116,7 +131,6 @@ function uncoverAdjacentSquares(square, randomNumbers){
                 } else {
                     element.innerHTML = ``
                 }
-                console.log(square, element)
                 if (surroundingMines == 0 && !element.classList.contains('visited')) {
                     element.classList.add('visited')
                     uncoverAdjacentSquares(element, randomNumbers)
@@ -188,7 +202,7 @@ function loseGame(randomNumbers){
         alert('game is lost')
     }, "100");
 
-    board.removeEventListener('click', checkMineHandler)
+    board.removeEventListener('click', checkMine)
     board.removeEventListener('contextmenu', placeFlag)
 
 }
@@ -205,7 +219,7 @@ function checkWinCondition() {
             alert('game is won')
         }, 10);
     
-        board.removeEventListener('click', checkMineHandler)
+        board.removeEventListener('click', checkMine)
         board.removeEventListener('contextmenu', placeFlag)
     
     }
