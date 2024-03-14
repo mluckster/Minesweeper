@@ -76,7 +76,7 @@ function checkMine(e) {
     })
 
     if (found){
-        loseGame(randomNumbers)
+        loseGame(randomNumbers, e.target)
     }
     else {
         if (!e.target.classList.contains('active')) {
@@ -180,7 +180,7 @@ function placeFlag(e){
     }
 }
 
-function loseGame(randomNumbers){
+function loseGame(randomNumbers, element){
     Array.from(board.children).forEach(element => {
 
         const id = [Number(element.id[0]), Number(element.id[1])];
@@ -190,7 +190,8 @@ function loseGame(randomNumbers){
         element.removeEventListener('click', checkMine)
         element.removeEventListener('contextmenu', placeFlag)
     });
-
+    
+    element.style.backgroundColor = 'red'
     generate.classList.add('lose')
 }
 
@@ -198,11 +199,12 @@ function checkWinCondition() {
     //number of total square - number of mines (place vars if setting is added)
     if (numberOfClears == 64 - numberOfMines) { 
         Array.from(board.children).forEach(element => {
-            if (element.classList.contains('mine')) {
-                element.classList.add('bomb')
+            if (!element.classList.contains('active') && !element.classList.contains('flag')) {
+                element.classList.add('flag')
             }
             element.removeEventListener('click', checkMine)
             element.removeEventListener('contextmenu', placeFlag)
+            element.classList.add('flash')
         })
 
         generate.classList.add('win')
