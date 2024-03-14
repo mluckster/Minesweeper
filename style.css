@@ -20,6 +20,9 @@ body{
     background-color: #767676;
     box-shadow: 4px 4px 25px 0 rgba(255, 255, 255, 0.2), 0 6px 20px 0 rgba(218, 218, 218, 0.2);
     border: 2px solid white;
+    font-weight: 400;
+    font-weight: 900;
+    font-size: larger;
 }
 
 .square:hover{
@@ -33,7 +36,10 @@ body{
 }
 
 .flag, .flag:hover .flag:active{ 
-    background-color: yellow;
+    background-image: url(assets/Flag.png);
+    background-size: 60%;
+    background-position: center;
+    background-repeat: no-repeat;
     transform: translate(3%, 3%);
     border: 2px solid black;
 }
@@ -42,4 +48,60 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+#reset{
+    background-color: #767676;;
+    width: 50px;
+    height: 53px;
+    background-image: url(assets/smile.png);
+    background-size: cover;
+    background-position: center;
+}
+
+#reset:active{
+    background-image: url(assets/;O.png);
+}
+
+#reset.lose {
+    background-image: url(assets/lose.png);
+}
+
+#reset.win {
+    background-image: url(assets/win.png)
+}
+
+.bomb {
+    background-image: url(assets/bomb.png);
+    background-size: 65%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.text-1{
+    color: blue;
+}
+
+.text-2{
+    color: red;
+}
+
+.text-3{
+    color: rgb(0, 147, 5);
+}
+
+.text-4{
+    color: rgb(100, 0, 88);
+}
+
+.text-5{
+    color: rgb(0, 88, 100);
+}
+
+.text-6{
+    color: rgb(87, 97, 0);
+}
+
+.text-7{
+    color: rgb(97, 0, 0);
 }

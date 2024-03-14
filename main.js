@@ -7,11 +7,10 @@ let numberOfClears = 0
 let noOfRow = 8
 let noOfCol = 8
 
-// initial event listeners and setup for the game
+// initial event listeners just to reset the game
 generate.addEventListener('click', generateBoard)
-// board.addEventListener('click', checkMine)
-// board.addEventListener('contextmenu', placeFlag)
-makeSquares(8, 8)
+
+makeSquares(noOfRow, noOfCol)
 
 const squares = document.querySelectorAll('.square')
 
@@ -21,12 +20,14 @@ function generateBoard(e) {
     randomNumbers = []
     board.innerHTML = ''
     numberOfClears = 0
+    generate.classList.remove('lose')
+    generate.classList.remove('win')
     
     // make grid based on difficulty and set number of mines
     numberOfMines = 10 // this line isn't needed currently
     
     //random number array only made after first square is clicked!
-    makeSquares(8, 8)
+    makeSquares(noOfRow, noOfCol)
 }
 
 // generates an array of numbers which will correspond to the location of the mines
@@ -91,6 +92,7 @@ function checkMine(e) {
             e.target.innerHTML = ``
         } else {
             e.target.innerHTML = `${surrounding}`
+            e.target.classList.add(`text-${surrounding}`)
         }
     }
 }
@@ -114,6 +116,7 @@ function uncoverAdjacentSquares(square, randomNumbers) {
                 }
                 if (surroundingMines != 0){
                     element.innerHTML = `${surroundingMines}`
+                    element.classList.add(`text-${surroundingMines}`)
                 } else {
                     element.innerHTML = ``
                 }
@@ -170,8 +173,10 @@ function placeFlag(e){
     e.preventDefault()
     if (e.target.classList.contains('flag')){
         e.target.classList.remove('flag')
+        e.target.addEventListener('click', checkMine)
     } else if (!e.target.classList.contains('active')) {
         e.target.classList.add('flag')
+        e.target.removeEventListener('click', checkMine)
     }
 }
 
@@ -180,16 +185,13 @@ function loseGame(randomNumbers){
 
         const id = [Number(element.id[0]), Number(element.id[1])];
         if (randomNumbers.some(arr => arr[0] === id[0] && arr[1] === id[1])) {
-            element.style.backgroundColor = 'red';
+            element.classList.add('bomb')
         }
         element.removeEventListener('click', checkMine)
         element.removeEventListener('contextmenu', placeFlag)
     });
 
-    setTimeout(() => {
-        alert('game is lost')
-    }, "100");
-
+    generate.classList.add('lose')
 }
 
 function checkWinCondition() {
@@ -197,14 +199,13 @@ function checkWinCondition() {
     if (numberOfClears == 64 - numberOfMines) { 
         Array.from(board.children).forEach(element => {
             if (element.classList.contains('mine')) {
-                element.style.backgroundColor = 'red'
+                element.classList.add('bomb')
             }
             element.removeEventListener('click', checkMine)
             element.removeEventListener('contextmenu', placeFlag)
         })
-        setTimeout(() => {
-            alert('game is won')
-        }, 10);
+
+        generate.classList.add('win')
     }
 }
 
