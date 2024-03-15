@@ -1,24 +1,41 @@
 const board = document.getElementById('board')
 const generate = document.getElementById('reset')
 const timer = document.getElementById('timer')
+const score = document.getElementById('score')
+const messageElement = document.getElementById('game-over')
+const difficultyElements = document.querySelectorAll('.difficulty')
+
 let timerOn = false
+let difficulty = 'easy'
+let timeInSec = 0
 let randomNumbers = []
 let numberOfMines = 10
-let numberOfFlags = 0
+let numberOfFlags = numberOfMines
 let numberOfClears = 0
 let noOfRow = 8
 let noOfCol = 8
 
 // initial event listeners just to reset the game
 generate.addEventListener('click', generateBoard)
+difficultyElements.forEach((diffEl) => {
+    diffEl.addEventListener('click', changeDifficulty)
+})
+document.documentElement.style.setProperty('--noOfCol', 8);
+document.documentElement.style.setProperty('--noOfRow', 8);
+document.documentElement.style.setProperty('--squareSize', '50px');
 
 makeSquares(noOfRow, noOfCol)
 
-const squares = document.querySelectorAll('.square')
+score.innerHTML = `${numberOfFlags}`
 
 // generates board for the squares to appear
 function generateBoard(e) {
     // resetting board from previous game:
+    messageElement.innerHTML = ''
+    numberOfFlags = numberOfMines
+    score.innerHTML = `${numberOfFlags}`
+    timer.innerHTML = `0`;
+    timerOn = false
     randomNumbers = []
     board.innerHTML = ''
     numberOfClears = 0
@@ -26,10 +43,13 @@ function generateBoard(e) {
     generate.classList.remove('win')
     
     // make grid based on difficulty and set number of mines
-    numberOfMines = 10 // this line isn't needed currently
     
     //random number array only made after first square is clicked!
     makeSquares(noOfRow, noOfCol)
+    const squares = document.querySelectorAll('.square')
+    squares.forEach((square) => {
+        square.add
+    })
 }
 
 // generates an array of numbers which will correspond to the location of the mines
@@ -177,14 +197,19 @@ function placeFlag(e){
     e.preventDefault()
     if (e.target.classList.contains('flag')){
         e.target.classList.remove('flag')
+        numberOfFlags += 1
+        score.innerHTML = `${numberOfFlags}`
         e.target.addEventListener('click', checkMine)
     } else if (!e.target.classList.contains('active')) {
         e.target.classList.add('flag')
+        numberOfFlags -= 1
+        score.innerHTML = `${numberOfFlags}`
         e.target.removeEventListener('click', checkMine)
     }
 }
 
 function loseGame(randomNumbers, element){
+    messageElement.innerHTML = 'You exploded!'
     Array.from(board.children).forEach(element => {
 
         const id = [Number(element.id[0]), Number(element.id[1])];
@@ -203,15 +228,18 @@ function loseGame(randomNumbers, element){
 function checkWinCondition() {
     //number of total square - number of mines (place vars if setting is added)
     if (numberOfClears == 64 - numberOfMines) { 
+        timerOn = false
+        messageElement.innerHTML = `Congrats you've cleared the ${difficulty} board in ${timeInSec} seconds`
         Array.from(board.children).forEach(element => {
             if (!element.classList.contains('active') && !element.classList.contains('flag')) {
                 element.classList.add('flag')
+                numberOfFlags -= 1
+                score.innerHTML = `${numberOfFlags}`
             }
             element.removeEventListener('click', checkMine)
             element.removeEventListener('contextmenu', placeFlag)
             element.classList.add('flash')
         })
-
         generate.classList.add('win')
     }
 }
@@ -225,20 +253,57 @@ function makeSquares(row, col) {
             square.id = `${j}${i}`
             square.addEventListener('click', checkMine)
             square.addEventListener('contextmenu', placeFlag)
+            square.addEventListener('mousedown', changeFaceO)
+            square.addEventListener('mouseup', changeFaceS)
         }
     }
 }
 
+function changeFaceO () {
+    reset.classList.add('face')
+}
+
+function changeFaceS () {
+    reset.classList.remove('face')
+}
+
+function changeDifficulty(e) {
+    if (e.target.id == 'intermediate'){
+        noOfRow = 16
+        noOfCol = 16
+        document.documentElement.style.setProperty('--noOfCol', 16);
+        document.documentElement.style.setProperty('--noOfRow', 16);
+        document.documentElement.style.setProperty('--squareSize', '30px');
+        numberOfMines = 40;
+        generateBoard();
+    } else if (e.target.id == 'expert') {
+        noOfRow = 30
+        noOfCol = 16
+        document.documentElement.style.setProperty('--noOfCol', 16);
+        document.documentElement.style.setProperty('--noOfRow', 30);
+        document.documentElement.style.setProperty('--squareSize', '20px');
+        numberOfMines = 99;
+        generateBoard();
+    } else {
+        noOfRow = 8
+        noOfCol = 8
+        document.documentElement.style.setProperty('--noOfCol', 8);
+        document.documentElement.style.setProperty('--noOfRow', 8);
+        document.documentElement.style.setProperty('--squareSize', '50px');
+        numberOfMines = 10;
+        generateBoard();
+    }
+}
+
 function startTimer(){
-    let sec = 0;
+    timeInSec = 0;
     let id = setInterval(() => {
         if (timerOn){
-            sec += 1;
-            if (sec < 60) {
-                timer.innerHTML = `${sec}`;
+            timeInSec += 1;
+            if (timeInSec < 60) {
+                timer.innerHTML = `${timeInSec}`;
             }
         } else clearInterval(id)
     }, 1000);
 }
 
-// timerOn needs to be set to stop and reset when you press the reset button, and also when you win the game. 

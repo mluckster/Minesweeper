@@ -4,7 +4,7 @@ body{
     flex-direction: column;
     align-items: center;
     width: 50vw;
-    gap: 5px;
+    gap: 8px;
     margin-top: 15px;
     background-color: #373737;
 }
@@ -16,10 +16,19 @@ body{
     align-items: center;
 }
 
-#board{
+#score, #timer{
+    height: 40px;
+    width: 60px;
+    text-align: center;
+    line-height: 40px;
+    font-size: x-large;
+    color: white;
+}
+
+#board {
     display: grid;
-    grid-template-columns: repeat(8, 50px);
-    grid-template-rows: repeat(8, 50px);
+    grid-template-columns: repeat(var(--noOfCol), var(--squareSize)); /* Update to use custom property */
+    grid-template-rows: repeat(var(--noOfRow), var(--squareSize)); /* Update to use custom property */
     grid-gap: 3px;
 }
 
@@ -78,6 +87,10 @@ body{
     background-image: url(assets/win.png)
 }
 
+#reset.face {
+    background-image: url(assets/;O.png);
+}
+
 .bomb {
     background-image: url(assets/bomb.png);
     background-size: 65%;
@@ -121,4 +134,34 @@ body{
 
 .text-7{
     color: rgb(97, 0, 0);
+}
+
+#game-over{
+    color: white;
+    height: 50px;
+    width: 28vw;
+    text-align: center;
+    line-height: 50px;  
+}
+
+.settings{
+    display: flex;
+    gap: 20px;
+}
+
+.difficulty{
+    display: inline-block;
+    padding: 8px 12px;
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: #767676;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.difficulty:hover{
+    background-color: #a8a8a8;
 }
