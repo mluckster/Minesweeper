@@ -1,5 +1,7 @@
 const board = document.getElementById('board')
 const generate = document.getElementById('reset')
+const timer = document.getElementById('timer')
+let timerOn = false
 let randomNumbers = []
 let numberOfMines = 10
 let numberOfFlags = 0
@@ -68,6 +70,8 @@ function generateMines(numMine, row, col, element) {
 function checkMine(e) {
     console.log('check mine')
     if (randomNumbers.length == 0) {
+        timerOn = true
+        startTimer()
         randomNumbers = generateMines(numberOfMines, noOfRow, noOfCol, e.target)
     }
 
@@ -193,6 +197,7 @@ function loseGame(randomNumbers, element){
     
     element.style.backgroundColor = 'red'
     generate.classList.add('lose')
+    timerOn = false
 }
 
 function checkWinCondition() {
@@ -223,3 +228,17 @@ function makeSquares(row, col) {
         }
     }
 }
+
+function startTimer(){
+    let sec = 0;
+    let id = setInterval(() => {
+        if (timerOn){
+            sec += 1;
+            if (sec < 60) {
+                timer.innerHTML = `${sec}`;
+            }
+        } else clearInterval(id)
+    }, 1000);
+}
+
+// timerOn needs to be set to stop and reset when you press the reset button, and also when you win the game. 

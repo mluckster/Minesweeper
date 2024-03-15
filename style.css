@@ -9,6 +9,13 @@ body{
     background-color: #373737;
 }
 
+.title{
+    display: flex;
+    width: 28vw;
+    justify-content: space-around;
+    align-items: center;
+}
+
 #board{
     display: grid;
     grid-template-columns: repeat(8, 50px);
@@ -85,7 +92,7 @@ body{
 }
 
 #board .flash {
-    animation: flash 0.6s 3;
+    animation: flash 0.6s 2;
 }
 
 .text-1{
