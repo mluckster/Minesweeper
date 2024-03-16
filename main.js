@@ -1,3 +1,6 @@
+// need to fix board identification from ID assignments 
+//(I changed it from just numbers to #-# because it didn't work with the larger board)
+
 const board = document.getElementById('board')
 const generate = document.getElementById('reset')
 const timer = document.getElementById('timer')
@@ -88,7 +91,8 @@ function generateMines(numMine, row, col, element) {
 }
 
 function checkMine(e) {
-    console.log('check mine')
+    console.log('check mine', e.target.id[0])
+    console.log(new RegExp('abc'))
     if (randomNumbers.length == 0) {
         timerOn = true
         startTimer()
@@ -122,7 +126,7 @@ function checkMine(e) {
 }
 
 function uncoverAdjacentSquares(square, randomNumbers) {
-    // then we can 2d loop through row -1 to row +1 and within col -1 to col + 1
+    // 2d loop through row -1 to row +1 and within col -1 to col + 1
     // finding the element by using: document.getElementById(''${i}${j})
 
     let row = Number(square.id[0])
@@ -130,7 +134,7 @@ function uncoverAdjacentSquares(square, randomNumbers) {
 
     for (let i = row - 1; i <= row + 1; i++) {
         for (let j = col - 1; j <= col + 1; j++) {
-            const element = document.getElementById(`${i}${j}`)
+            const element = document.getElementById(`${i}-${j}`)
             if (element && (i != row || j != col)) { // cases around the edge of the board -- element would be null
                 const surroundingMines = scanSurroundings([i, j], randomNumbers)
                 if (!element.classList.contains('active')) {
@@ -233,6 +237,7 @@ function checkWinCondition() {
         Array.from(board.children).forEach(element => {
             if (!element.classList.contains('active') && !element.classList.contains('flag')) {
                 element.classList.add('flag')
+                console.log('this happens')
                 numberOfFlags -= 1
                 score.innerHTML = `${numberOfFlags}`
             }
@@ -250,7 +255,7 @@ function makeSquares(row, col) {
             const square = document.createElement('div')
             board.appendChild(square)
             square.classList = 'square'
-            square.id = `${j}${i}`
+            square.id = `${j}-${i}`
             square.addEventListener('click', checkMine)
             square.addEventListener('contextmenu', placeFlag)
             square.addEventListener('mousedown', changeFaceO)
@@ -268,7 +273,8 @@ function changeFaceS () {
 }
 
 function changeDifficulty(e) {
-    if (e.target.id == 'intermediate'){
+    if (e.target.id == 'hard'){
+        difficulty = 'hard'
         noOfRow = 16
         noOfCol = 16
         document.documentElement.style.setProperty('--noOfCol', 16);
@@ -276,15 +282,8 @@ function changeDifficulty(e) {
         document.documentElement.style.setProperty('--squareSize', '30px');
         numberOfMines = 40;
         generateBoard();
-    } else if (e.target.id == 'expert') {
-        noOfRow = 30
-        noOfCol = 16
-        document.documentElement.style.setProperty('--noOfCol', 16);
-        document.documentElement.style.setProperty('--noOfRow', 30);
-        document.documentElement.style.setProperty('--squareSize', '20px');
-        numberOfMines = 99;
-        generateBoard();
     } else {
+        difficulty = 'easy'
         noOfRow = 8
         noOfCol = 8
         document.documentElement.style.setProperty('--noOfCol', 8);

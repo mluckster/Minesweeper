@@ -27,8 +27,8 @@ body{
 
 #board {
     display: grid;
-    grid-template-columns: repeat(var(--noOfCol), var(--squareSize)); /* Update to use custom property */
-    grid-template-rows: repeat(var(--noOfRow), var(--squareSize)); /* Update to use custom property */
+    grid-template-columns: repeat(var(--noOfCol), var(--squareSize));
+    grid-template-rows: repeat(var(--noOfRow), var(--squareSize));
     grid-gap: 3px;
 }
 
