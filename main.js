@@ -17,6 +17,7 @@ let numberOfFlags = numberOfMines
 let numberOfClears = 0
 let noOfRow = 8
 let noOfCol = 8
+let boardSize = 64
 
 // initial event listeners just to reset the game
 generate.addEventListener('click', generateBoard)
@@ -50,14 +51,10 @@ function generateBoard(e) {
     //random number array only made after first square is clicked!
     makeSquares(noOfRow, noOfCol)
     const squares = document.querySelectorAll('.square')
-    squares.forEach((square) => {
-        square.add
-    })
 }
 
 // generates an array of numbers which will correspond to the location of the mines
 function generateMines(numMine, row, col, element) {
-    
     let numbers = []
 
     while (numbers.length < numMine){
@@ -72,7 +69,8 @@ function generateMines(numMine, row, col, element) {
         })
         
         // need to work on this - it's not working
-        const initialClickedSquare = [Number(element.id[0]), Number(element.id[1])]
+        const idNo = element.id.split('-')
+        const initialClickedSquare = [Number(idNo[0]), Number(idNo[1])]
 
         for (let i = initialClickedSquare[0] - 1; i <= initialClickedSquare[0] + 1; i++){
             for (let j = initialClickedSquare[1] - 1; j <= initialClickedSquare[1] + 1; j++) {
@@ -91,8 +89,8 @@ function generateMines(numMine, row, col, element) {
 }
 
 function checkMine(e) {
-    console.log('check mine', e.target.id[0])
-    console.log(new RegExp('abc'))
+    const idNo = e.target.id.split('-')
+
     if (randomNumbers.length == 0) {
         timerOn = true
         startTimer()
@@ -100,7 +98,7 @@ function checkMine(e) {
     }
 
     const found = randomNumbers.some((arr) => {
-        return arr[0] === Number(e.target.id[0]) && arr[1] === Number(e.target.id[1])
+        return arr[0] === Number(idNo[0]) && arr[1] === Number(idNo[1])
     })
 
     if (found){
@@ -113,8 +111,9 @@ function checkMine(e) {
             checkWinCondition()
         }
         e.target.classList.remove('flag')
-        const cell = [Number(e.target.id[0]), Number(e.target.id[1])]
+        const cell = [Number(idNo[0]), Number(idNo[1])]
         const surrounding = scanSurroundings(cell, randomNumbers)
+        console.log(surrounding)
         if (surrounding == 0){
             uncoverAdjacentSquares(e.target, randomNumbers)
             e.target.innerHTML = ``
@@ -128,9 +127,9 @@ function checkMine(e) {
 function uncoverAdjacentSquares(square, randomNumbers) {
     // 2d loop through row -1 to row +1 and within col -1 to col + 1
     // finding the element by using: document.getElementById(''${i}${j})
-
-    let row = Number(square.id[0])
-    let col = Number(square.id[1])
+    const squareIdNo = square.id.split('-')
+    let row = Number(squareIdNo[0])
+    let col = Number(squareIdNo[1])
 
     for (let i = row - 1; i <= row + 1; i++) {
         for (let j = col - 1; j <= col + 1; j++) {
@@ -161,35 +160,36 @@ function uncoverAdjacentSquares(square, randomNumbers) {
 function scanSurroundings(cell, randomNumbers){
     let minesAroundCell = 0
     Array.from(board.children).forEach(element => {
+        const idNo = element.id.split('-')
         if ( 
-            Number(element.id[0]) === cell[0] - 1 &&
+            Number(idNo[0]) === cell[0] - 1 &&
             (
-                Number(element.id[1]) === cell[1] - 1 ||
-                Number(element.id[1]) === cell[1] ||
-                Number(element.id[1]) === cell[1] + 1 
+                Number(idNo[1]) === cell[1] - 1 ||
+                Number(idNo[1]) === cell[1] ||
+                Number(idNo[1]) === cell[1] + 1 
             ) &&
-            randomNumbers.some(arr => arr[0] === Number(element.id[0]) && arr[1] === Number(element.id[1]))
+            randomNumbers.some(arr => arr[0] === Number(idNo[0]) && arr[1] === Number(idNo[1]))
         ) {
             minesAroundCell += 1
         }
         else if (
-            Number(element.id[0]) === cell[0] && 
+            Number(idNo[0]) === cell[0] && 
             ( 
-                Number(element.id[1]) === cell[1] - 1 ||
-                Number(element.id[1]) === cell[1] + 1 
+                Number(idNo[1]) === cell[1] - 1 ||
+                Number(idNo[1]) === cell[1] + 1 
             ) &&
-            randomNumbers.some(arr => arr[0] === Number(element.id[0]) && arr[1] === Number(element.id[1]))
+            randomNumbers.some(arr => arr[0] === Number(idNo[0]) && arr[1] === Number(idNo[1]))
             ) {
                 minesAroundCell += 1
             }
         else if (
-            Number(element.id[0]) === cell[0] + 1  && 
+            Number(idNo[0]) === cell[0] + 1  && 
             ( 
-                Number(element.id[1]) === cell[1] - 1 ||
-                Number(element.id[1]) === cell[1] ||
-                Number(element.id[1]) === cell[1] + 1  
+                Number(idNo[1]) === cell[1] - 1 ||
+                Number(idNo[1]) === cell[1] ||
+                Number(idNo[1]) === cell[1] + 1  
             ) &&
-            randomNumbers.some(arr => arr[0] === Number(element.id[0]) && arr[1] === Number(element.id[1]))
+            randomNumbers.some(arr => arr[0] === Number(idNo[0]) && arr[1] === Number(idNo[1]))
             ) {
                 minesAroundCell += 1
             }
@@ -215,8 +215,8 @@ function placeFlag(e){
 function loseGame(randomNumbers, element){
     messageElement.innerHTML = 'You exploded!'
     Array.from(board.children).forEach(element => {
-
-        const id = [Number(element.id[0]), Number(element.id[1])];
+        const idNo = element.id.split('-')
+        const id = [Number(idNo[0]), Number(idNo[1])];
         if (randomNumbers.some(arr => arr[0] === id[0] && arr[1] === id[1])) {
             element.classList.add('bomb')
         }
@@ -231,7 +231,7 @@ function loseGame(randomNumbers, element){
 
 function checkWinCondition() {
     //number of total square - number of mines (place vars if setting is added)
-    if (numberOfClears == 64 - numberOfMines) { 
+    if (numberOfClears == boardSize - numberOfMines) { 
         timerOn = false
         messageElement.innerHTML = `Congrats you've cleared the ${difficulty} board in ${timeInSec} seconds`
         Array.from(board.children).forEach(element => {
@@ -277,6 +277,7 @@ function changeDifficulty(e) {
         difficulty = 'hard'
         noOfRow = 16
         noOfCol = 16
+        boardSize = 256
         document.documentElement.style.setProperty('--noOfCol', 16);
         document.documentElement.style.setProperty('--noOfRow', 16);
         document.documentElement.style.setProperty('--squareSize', '30px');
