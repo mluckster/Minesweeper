@@ -24,9 +24,14 @@ generate.addEventListener('click', generateBoard)
 difficultyElements.forEach((diffEl) => {
     diffEl.addEventListener('click', changeDifficulty)
 })
+
+// css style variables
 document.documentElement.style.setProperty('--noOfCol', 8);
 document.documentElement.style.setProperty('--noOfRow', 8);
-document.documentElement.style.setProperty('--squareSize', '50px');
+document.documentElement.style.setProperty('--squareSize', '8.2vh');
+document.documentElement.style.setProperty('--gapSize', '1px')
+document.documentElement.style.setProperty('--border', '2px solid white')
+
 
 makeSquares(noOfRow, noOfCol)
 
@@ -278,20 +283,25 @@ function changeDifficulty(e) {
         noOfRow = 16
         noOfCol = 16
         boardSize = 256
-        document.documentElement.style.setProperty('--noOfCol', 16);
-        document.documentElement.style.setProperty('--noOfRow', 16);
-        document.documentElement.style.setProperty('--squareSize', '30px');
-        numberOfMines = 40;
-        generateBoard();
+        document.documentElement.style.setProperty('--noOfCol', 16)
+        document.documentElement.style.setProperty('--noOfRow', 16)
+        document.documentElement.style.setProperty('--squareSize', '4.2vh')
+        document.documentElement.style.setProperty('--gapSize', '0.25px')
+        document.documentElement.style.setProperty('--border', '1px solid white')
+        numberOfMines = 40
+        generateBoard()
     } else {
         difficulty = 'easy'
         noOfRow = 8
         noOfCol = 8
-        document.documentElement.style.setProperty('--noOfCol', 8);
-        document.documentElement.style.setProperty('--noOfRow', 8);
-        document.documentElement.style.setProperty('--squareSize', '50px');
-        numberOfMines = 10;
-        generateBoard();
+        boardSize = 64
+        document.documentElement.style.setProperty('--noOfCol', 8)
+        document.documentElement.style.setProperty('--noOfRow', 8)
+        document.documentElement.style.setProperty('--squareSize', '8.2vh')
+        document.documentElement.style.setProperty('--gapSize', '1px')
+        document.documentElement.style.setProperty('--border', '2px solid white')
+        numberOfMines = 10
+        generateBoard()
     }
 }
 
@@ -300,9 +310,7 @@ function startTimer(){
     let id = setInterval(() => {
         if (timerOn){
             timeInSec += 1;
-            if (timeInSec < 60) {
-                timer.innerHTML = `${timeInSec}`;
-            }
+            timer.innerHTML = `${timeInSec}`;
         } else clearInterval(id)
     }, 1000);
 }

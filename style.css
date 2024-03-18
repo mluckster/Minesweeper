@@ -29,13 +29,13 @@ body{
     display: grid;
     grid-template-columns: repeat(var(--noOfCol), var(--squareSize));
     grid-template-rows: repeat(var(--noOfRow), var(--squareSize));
-    grid-gap: 3px;
+    grid-gap: var(--gapSize);
 }
 
 .square{
     background-color: #767676;
     box-shadow: 4px 4px 25px 0 rgba(255, 255, 255, 0.2), 0 6px 20px 0 rgba(218, 218, 218, 0.2);
-    border: 2px solid white;
+    border: var(--border);
     font-weight: 400;
     font-weight: 900;
     font-size: larger;
